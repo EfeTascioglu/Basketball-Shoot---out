@@ -188,7 +188,7 @@ class ball:
       tempY = sin( angle ) * myVelocity# * 0.9
       print( tempX, tempY )
       self.velocity = { 'x': tempX , 'y': tempY }
-      self.collidedCounter = 2
+      self.collidedCounter = 1
       
 class hoop:
     
