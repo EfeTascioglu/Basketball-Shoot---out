@@ -1,8 +1,7 @@
 import math
 def setup():
   global basketball, goal, status, whichSquare
-  global pSX, pSY, pSW, pSH, barX, barY, barW, barH, angle
-  global sX, sY, selecting, selectingPower
+err  global sX, sY, selecting, selectingPower
   selectingPower = False
   sX = 0.0
   sY = 600.0
