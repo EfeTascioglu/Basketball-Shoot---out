@@ -3,6 +3,8 @@ def setup():
   global basketball, goal, status, whichSquare
   global pSX, pSY, pSW, pSH, barX, barY, barW, barH, angle
   global sX, sY, selecting, selectingPower, score
+  global timeAllowed
+  timeAllowed = 10
   score = 0
   selectingPower = False
   sX = 50.0
@@ -34,9 +36,21 @@ def start1():
     allBoundaries.append ([[100, 300], [200, 400]])
     allBoundaries.append ([])
     anglePressed = False
-    
-    
+def endGame ():
+    background (0)
+def startNewGame():
+    global startTime, status
+    startTime = second()
+    status = 'preGame'
+def time():
+    global startTime, timeAllowed, status
+    if second()>startTime and second()-startTime >= timeAllowed:
+        status = 'endGame'
+    elif startTime > second() and 60-startTime + second() >= timeAllowed:
+        status = 'endGame'
+    print (second(), ' ', startTime)
 def draw():
+  print (status)
   global basketball, goal, status
   #print (status)
   if status == 'startMenu':
@@ -47,6 +61,10 @@ def draw():
       optionMenu()
   if status == 'preGame':
       preGame()
+  if status == 'startNewGame':
+      startNewGame()
+  if status == 'endGame':
+      endGame()
 
 
 def startMenu():
@@ -56,8 +74,7 @@ def startMenu():
     rect (100, 100, 100, 100)
     rect (100, 300, 100, 100)
     if whichSquare == 0:
-        status = 'preGame'
-        #print("here", status)
+        status = 'startNewGame'
     if whichSquare == 1:
         status = 'optionMenu'
 
@@ -80,6 +97,7 @@ def preGame():
   global status, angle, power, goal, basketball, anglePressed
   background(255)
   power = -1
+  time()
   drawHoop(goal)
   #angle = drawAngleSelector()
   angle = angleSelector()
@@ -96,6 +114,7 @@ def inGame():
   global basketball, goal, status
   fill(255)
   stroke(0)
+  time()
   basketball.animate()
   goal.move()
   goal.collisionDetect( basketball )
@@ -139,7 +158,6 @@ def mouseReleased():
       
 
 
-    
 
 class ball:
   global sX, sY
