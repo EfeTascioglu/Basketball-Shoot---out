@@ -188,7 +188,7 @@ class ball:
       tempY = sin( angle ) * myVelocity# * 0.9
       print( tempX, tempY )
       self.velocity = { 'x': tempX , 'y': tempY }
-      self.collidedCounter = 5
+      self.collidedCounter = 2
       
 class hoop:
     
@@ -197,10 +197,10 @@ class hoop:
       self.motion = initMotion
       self.rad = 0
       self.bounds = [400, 600]
-      self.backboard = { 'x': 0, 'y': 380 }
+      self.backboard = { 'x': 0, 'y': 375 }
       self.rim = { 'x': -90, 'y': 450 } # Y constant height
-      self.top = { 'x': self.x, 'y': self.backboard['y'] + 1 }
-      self.back = {'x': self.x + 20, 'y': self.rim['y'] }
+      self.top = { 'x': 0, 'y': self.backboard['y'] + 5 }
+      self.back = {'x': -20, 'y': self.rim['y'] }
       self.points = [ self.rim, self.top, self.back ]
       
   def move( self ):
@@ -212,6 +212,7 @@ class hoop:
       elif self.x >= self.bounds[1]:
           self.motion *= -1
           self.x = self.bounds[1]
+    #for i in 
           
   def collisionDetect( self, ball ):
       #print( ( ball.getX() - self.x + self.rim['x'] ) )
@@ -221,20 +222,22 @@ class hoop:
                 while ( ( ball.getX() - ( self.x + self.points[i]['x'] ) ) ** 2 + ( ball.getY() - self.points[i]['y'] ) ** 2 ) ** 0.5 <= ball.getRad() + self.rad:
                     #print ( ball.getX(), ball.getY() )
                     ball.manipulate( (ball.getVelocity())['x'] * (-0.01) , (ball.getVelocity()['y'] * (-0.01)) )
-                self.collision( ball )
+                self.collision( ball, i )
               
   def collisionBackboard( self, ball ):
+      if ball.getCollidedCounter() <= 0:
         if (self.x - ball.getX()) < ball.getRad() and (ball.getY() + ball.getRad() - 1) > self.backboard['y'] and (ball.getX() - self.x) < ball.getRad():
             print("ping")
             while (self.x - ball.getX()) < ball.getRad() and (ball.getY() + ball.getRad()) >= self.backboard['y']:
                   ball.manipulate( (ball.getVelocity())['x'] * (-0.01) , (ball.getVelocity()['y'] * (-0.01)) )
+                  print("NOOOO")
             ball.bounceX()
             
     
-  def collision( self, ball ):
+  def collision( self, ball, index ):
       angleBall = atan( ball.getVelocity()['y'] / ball.getVelocity()['x'] )
-      angleCollision = atan( ( ball.getY() - ( self.rim['y'] ) ) / ( ball.getX() - ( self.x + self.rim['x'] ) ) )
-      if ( ball.getX() - ( self.x + self.rim['x'] ) ) <= 0:
+      angleCollision = atan( ( ball.getY() - ( self.points[index]['y'] ) ) / ( ball.getX() - ( self.x + self.points[index]['x'] ) ) )
+      if ( ball.getX() - ( self.x + self.points[index]['x'] ) ) <= 0:
         angleCollision -= PI
       #print( angleCollision, angleBall )
       angleNew = 2 * abs(angleCollision) + abs(angleBall) - PI
