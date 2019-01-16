@@ -309,7 +309,7 @@ def angleSelector():
     line (sX, sY, eX, eY)
     sSize = 20
     ellipse (eX, eY, sSize, sSize)
-    if mousePressed and (eX - sSize <= mouseX <= eX + sSize and eY - sSize <= mouseY <= eY + sSize) or selecting:
+    if mousePressed and ((eX - sSize <= mouseX <= eX + sSize and eY - sSize <= mouseY <= eY + sSize) or selecting )and mouseX > sX and mouseY < sY:
         selecting = True
         angle = atan (float(sY - mouseY)/float(mouseX - sX))
         print (sY - mouseY, ' ', mouseX - sX, ' angle:', angle*180/PI)
