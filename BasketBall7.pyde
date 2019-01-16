@@ -1,10 +1,12 @@
 import math
 def setup():
   global basketball, goal, status, whichSquare
-  global sX, sY, selecting, selectingPower
+  global pSX, pSY, pSW, pSH, barX, barY, barW, barH, angle
+  global sX, sY, selecting, selectingPower, score
+  score = 0
   selectingPower = False
-  sX = 0.0
-  sY = 600.0
+  sX = 50.0
+  sY = 550.0
   selecting = False
   angle = PI/4
   barX = 200
@@ -104,6 +106,10 @@ def inGame():
   #print (basketball.getX(), " ", basketball.getY())
   drawHoop(goal)
   frameRate(25)
+  if basketball.getY() >= 575:
+      basketball.x = 50.0
+      basketball.y = 550.0
+      status = 'preGame'
 
 
   basketball.getRad()*2
@@ -270,8 +276,8 @@ def angleSelector():
     global angle, selecting, sX, sY
     
     lineLength = 144
-    eX = lineLength * cos(angle)
-    eY = 600 - lineLength * sin(angle)
+    eX = sX + lineLength * cos(angle)
+    eY = sY - lineLength * sin(angle)
     
     line (sX, sY, eX, eY)
     sSize = 20
@@ -306,5 +312,5 @@ def powerSelector():
     fill(255)
     if mousePressed and lX <= mouseX <= lX + lW and lY <= mouseY <= lY + lH and not selecting and not selectingPower:
         print (pSY ," +", barY)
-        return (pSH - (barY- pSY))
+        return ((pSH - (barY- pSY))*1.2)
     return (-1)
