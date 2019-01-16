@@ -234,6 +234,8 @@ class hoop:
   def collision( self, ball ):
       angleBall = atan( ball.getVelocity()['y'] / ball.getVelocity()['x'] )
       angleCollision = atan( ( ball.getY() - ( self.rim['y'] ) ) / ( ball.getX() - ( self.x + self.rim['x'] ) ) )
+      if ( ball.getX() - ( self.x + self.rim['x'] ) ) <= 0:
+        angleCollision -= PI
       #print( angleCollision, angleBall )
       angleNew = 2 * abs(angleCollision) + abs(angleBall) - PI
       #print( abs(angleCollision), abs(angleCollision) - abs(angleBall) )
