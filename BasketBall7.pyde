@@ -194,11 +194,14 @@ class hoop:
     
   def __init__( self, initX, initMotion ):
       self.x = initX
-      self.rim = { 'x': -90, 'y': 450 } # Y constant height
       self.motion = initMotion
       self.rad = 0
       self.bounds = [400, 600]
       self.backboard = { 'x': 0, 'y': 380 }
+      self.rim = { 'x': -90, 'y': 450 } # Y constant height
+      self.top = { 'x': self.x, 'y': self.backboard['y'] + 1 }
+      self.back = {'x': self.x + 20, 'y': self.rim['y'] }
+      self.points = [ self.rim, self.top, self.back ]
       
   def move( self ):
       self.x += self.motion
@@ -212,13 +215,13 @@ class hoop:
           
   def collisionDetect( self, ball ):
       #print( ( ball.getX() - self.x + self.rim['x'] ) )
-      if ball.getCollidedCounter() <= 0:
-          if ( ( ball.getX() - ( self.x + self.rim['x'] ) ) ** 2 + ( ball.getY() - self.rim['y'] ) ** 2 ) ** 0.5 <= ball.getRad() + self.rad:
-              while ( ( ball.getX() - ( self.x + self.rim['x'] ) ) ** 2 + ( ball.getY() - self.rim['y'] ) ** 2 ) ** 0.5 <= ball.getRad() + self.rad:
-                  #print ( ball.getX(), ball.getY() )
-                  ball.manipulate( (ball.getVelocity())['x'] * (-0.01) , (ball.getVelocity()['y'] * (-0.01)) )
-              self.collision( ball )
-              #print( "ping" )
+      for i in range(len(self.points)):
+        if ball.getCollidedCounter() <= 0:
+            if ( ( ball.getX() - ( self.x + self.points[i]['x'] ) ) ** 2 + ( ball.getY() - self.points[i]['y'] ) ** 2 ) ** 0.5 <= ball.getRad() + self.rad:
+                while ( ( ball.getX() - ( self.x + self.points[i]['x'] ) ) ** 2 + ( ball.getY() - self.points[i]['y'] ) ** 2 ) ** 0.5 <= ball.getRad() + self.rad:
+                    #print ( ball.getX(), ball.getY() )
+                    ball.manipulate( (ball.getVelocity())['x'] * (-0.01) , (ball.getVelocity()['y'] * (-0.01)) )
+                self.collision( ball )
               
   def collisionBackboard( self, ball ):
         if (self.x - ball.getX()) < ball.getRad() and (ball.getY() + ball.getRad() - 1) > self.backboard['y'] and (ball.getX() - self.x) < ball.getRad():
@@ -251,8 +254,9 @@ class hoop:
 
 def drawHoop( hoop ):
     strokeWeight(4)
-    line( hoop.getPos(), 600, hoop.getPos(), hoop.getBackboard()[1] )
+    line ( hoop.getPos(), 600, hoop.getPos(), hoop.getBackboard()[1] )
     line ( hoop.getPos(), hoop.getRim()[1], hoop.getRim()[0], hoop.getRim()[1] )
+    line ( hoop.getBackboard()[0], hoop.getRim()[1] + 20, hoop.getBackboard()[0] - 20, hoop.getRim()[1])
 
 def angleSelector(sX, sY, allBoundaries, pressed):
     global angle
