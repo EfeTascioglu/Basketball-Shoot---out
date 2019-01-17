@@ -281,24 +281,6 @@ def drawHoop( hoop ):
     line ( hoop.getPos(), hoop.getRim()[1], hoop.getRim()[0], hoop.getRim()[1] )
     line ( hoop.getBackboard()[0], hoop.getRim()[1] + 20, hoop.getBackboard()[0] - 20, hoop.getRim()[1])
 
-def angleSelector(sX, sY, allBoundaries, pressed):
-    global angle
-    lineLength = 144
-    eX = lineLength * cos(angle)+sX
-    eY = sY - lineLength * sin(angle)
-    
-    line (sX, sY, eX, eY)
-    sSize = 20
-    ellipse (eX, eY, sSize, sSize)
-    if not(pressed):
-        allBoundaries[2] = ( eX - sSize, eY - sSize, eX + sSize, eX + sSize )
-    #if mousePressed and eX - sSize <= mouseX <= eX + sSize and eY - sSize <= mouseY <= eX + sSize:
-    if pressed:
-        angle = atan (float(sY - mouseY)/float(mouseX - sX))
-        
-        #print (sY - mouseY, ' ', mouseX - sX, ' angle:', angle*180/PI)
-    return angle, pressed
-
 def angleSelector():
     global angle, selecting, sX, sY
     
