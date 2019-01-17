@@ -1,43 +1,53 @@
 import math
 def setup():
-  global basketball, goal, status, whichSquare
-  global pSX, pSY, pSW, pSH, barX, barY, barW, barH, angle
-  global sX, sY, selecting, selectingPower, score
-  global timeAllowed
-  timeAllowed = 60
-  score = 0
-  selectingPower = False
-  sX = 50.0
-  sY = 550.0
-  selecting = False
-  angle = PI/4
-  barX = 200
-  barY = 350
-  barW = 50
-  barH = 50
-  pSX = 200
-  pSY = 200
-  pSW = 50
-  pSH = 200
-  whichSquare = -1
-  ##status: inGame, startMenu, exitMenu, optionMenu
-  status  = 'startMenu'
-  basketball = ball(PI/3, 0)
-  goal = hoop( 500, 0 )
+  Init()
   size (800, 600)
-  start1()
-
-
+  
+def Init():
+    global basketball, goal, status, whichSquare
+    global pSX, pSY, pSW, pSH, barX, barY, barW, barH, angle
+    global sX, sY, selecting, selectingPower, score
+    global timeAllowed
+    timeAllowed = 60
+    score = 0
+    selectingPower = False
+    sX = 50.0
+    sY = 550.0
+    selecting = False
+    angle = PI/4
+    barX = 200
+    barY = 350
+    barW = 50
+    barH = 50
+    pSX = 200
+    pSY = 200
+    pSW = 50
+    pSH = 200
+    whichSquare = -1
+    ##status: inGame, startMenu, exitMenu, optionMenu
+    status  = 'startMenu'
+    basketball = ball(PI/3, 0)
+    goal = hoop( 500, 0 )
+    start1()
+    
 def start1():
     global allBoundaries, numSquares, anglePressed
     allBoundaries = []
     numSquares = 2
     allBoundaries.append ([[100, 100], [200, 200]])
     allBoundaries.append ([[100, 300], [200, 400]])
-    allBoundaries.append ([])
     anglePressed = False
 def endGame ():
-    background (0)
+    global allBoundaries, numSquares, whichSquare, status
+    background(0)
+    allBoundaries = []
+    numSquares = 1
+    fill(255)
+    rect (100, 100, 100, 100)
+    allBoundaries.append ([[100, 100], [200, 200]])
+    if whichSquare == 0:
+        status = 'startMenu'
+        Init()
 def startNewGame():
     global startTime, status
     startTime = second()
@@ -48,7 +58,7 @@ def time():
         status = 'endGame'
     elif startTime > second() and 60-startTime + second() >= timeAllowed:
         status = 'endGame'
-    #print (second(), ' ', startTime)
+    print (second(), ' ', startTime)
 def draw():
   #print (status)
   global basketball, goal, status
