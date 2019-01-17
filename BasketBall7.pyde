@@ -8,7 +8,7 @@ def Init():
     global pSX, pSY, pSW, pSH, barX, barY, barW, barH, angle
     global sX, sY, selecting, selectingPower, score
     global timeAllowed
-    timeAllowed = 60
+    timeAllowed = 20
     score = 0
     selectingPower = False
     sX = 50.0
@@ -287,7 +287,6 @@ class hoop:
   
   def scored( self, ball ):
       if ( 0 < ball.getX() - self.rim['x'] - self.x < self.back['x'] + self.x) and ball.getY() <= self.rim['y']:
-          if ( self.rim['y'] - ball.getY()
           print("ping")
     
 
