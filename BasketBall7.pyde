@@ -2,12 +2,13 @@ import math
 def setup():
   Init()
   size (800, 600)
-  
+
 def Init():
     global basketball, goal, status, whichSquare
     global pSX, pSY, pSW, pSH, barX, barY, barW, barH, angle
     global sX, sY, selecting, selectingPower, score
-    global timeAllowed
+    global timeAllowed, scored 
+    scored = False
     timeAllowed = 20
     score = 0
     selectingPower = False
@@ -58,7 +59,6 @@ def time():
         status = 'endGame'
     elif startTime > second() and 60-startTime + second() >= timeAllowed:
         status = 'endGame'
-    print (second(), ' ', startTime)
 def draw():
   #print (status)
   global basketball, goal, status
@@ -76,6 +76,11 @@ def draw():
   if status == 'endGame':
       endGame()
 
+def printScore():
+    global score
+    fill(0)
+    text (str(score), 550, 100)
+    fill (255)
 
 def startMenu():
     global status
@@ -104,7 +109,9 @@ def optionMenu():
     
 
 def preGame():
-  global status, angle, power, goal, basketball, anglePressed
+  global status, angle, power, goal, basketball, anglePressed, scored
+  printScore()
+  scored = False
   background(255)
   power = -1
   time()
@@ -120,6 +127,8 @@ def preGame():
     status = 'inGame'
 
 def inGame():
+  printScore()
+  scoreCheck()
   background( 255 )
   global basketball, goal, status
   fill(255)
@@ -129,7 +138,6 @@ def inGame():
   goal.move()
   goal.collisionDetect( basketball )
   goal.collisionBackboard( basketball )
-  goal.scored( basketball )
   #print( goal.getRim()[0], goal.getRim()[1] )
   ellipse( goal.getRim()[0], goal.getRim()[1], goal.getRad() * 2, goal.getRad() * 2 )
   ellipse (basketball.getX(), basketball.getY(), basketball.getRad()*2, basketball.getRad()*2)
@@ -164,7 +172,13 @@ def mouseReleased():
   print ( whichSquare )
       
       
-
+def scoreCheck():
+    global goal, basketball, score, scored
+    if not scored and basketball.getX() > goal.getRim()[0] and basketball.getX() < goal.getBackboard()[0] and basketball.getY() <= goal.getRim()[1] + 7 and basketball.getY() >= goal.getRim()[1] - 7:
+        print('score ', score)
+        scored = True
+        score +=1
+        
       
       
 
@@ -218,7 +232,7 @@ class ball:
       print( tempX, tempY )
       self.velocity = { 'x': tempX , 'y': tempY }
       self.collidedCounter = 1
-      
+
 class hoop:
     
   def __init__( self, initX, initMotion ):
@@ -285,9 +299,7 @@ class hoop:
   def getPos( self ):
       return self.x
   
-  def scored( self, ball ):
-      if ( 0 < ball.getX() - self.rim['x'] - self.x < self.back['x'] + self.x) and ball.getY() <= self.rim['y']:
-          print("ping")
+  
     
 
 def drawHoop( hoop ):
