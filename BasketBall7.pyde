@@ -1,9 +1,9 @@
 import random
 def setup():
-  Init()
-  size (800, 600)
-  global sizeX, sizeY
-  sizeX, sizeY = 800, 600
+    Init()
+    size (800, 600)
+    global sizeX, sizeY
+    sizeX, sizeY = 800, 600
 
 def Init():
     global basketball, goal, status, whichSquare
@@ -20,7 +20,7 @@ def Init():
     lW = 100
     lH = 100
     scored = False
-    timeAllowed = 5
+    timeAllowed = 40
     score = 0
     selectingPower = False
     sX = 50.0
@@ -77,7 +77,7 @@ def time():
         status = 'endGame'
 def draw():
     global basketball, goal, status
-    print (status)
+    #print (status)
     if status == 'startMenu':
         startMenu()
     if status == 'inGame':
@@ -204,6 +204,35 @@ def mouseReleased():
           whichSquare = i
           break
   print ( whichSquare )
+      
+def keyPressed():
+    global choices, whichSquare, keyChosen
+    
+    keyChosen = key
+    
+    if keyCode == 8:
+        keyChosen = "BACK"
+    elif keyCode == 127:
+        keyChosen = "DEL"
+        
+    elif key == CODED:
+        #print("ping")
+        if keyCode == 38:
+            keyChosen = "UP"
+        elif keyCode == 37:
+            keyChosen = "LEFT"
+        elif keyCode == 39:
+            keyChosen = "RIGHT"
+        elif keyCode == 40:
+            keyChosen = "DOWN"
+        elif keyCode == 17:
+            keyChosen = "CONTROL"
+        elif keyCode == 20:
+            keyChosen = "CAPS"
+        elif keyCode == 16:
+            keyChosen = "SHIFT"
+        elif keyCode == 18:
+            keyChosen = "ALT"      
       
       
 def scoreCheck():
@@ -372,13 +401,13 @@ def powerSelector():
 
 
 def initiateLeaderboard( ): ####### Leaderboard #######
-    global activeSquares, pointer, scoreDictionary, sizeX, sizeY, choices, outputString, pointerCounter
+    global activeSquares, pointer, scoreDictionary, sizeX, sizeY, choices, outputString, pointerCounte, allBoundaries, numSquares, keyChosen
     monoFont = loadFont("DejaVuSansMono-48.vlw")
     textFont(monoFont, 26)
     
     
     choices = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-    global startSquareX, startSquareY, squareHeight, squareWidth, pointerCounter
+    global startSquareX, startSquareY, squareHeight, squareWidth, pointerCounter, submited
     startSquareX = 135
     startSquareY = 470
     squareXShow = startSquareX
@@ -401,21 +430,29 @@ def initiateLeaderboard( ): ####### Leaderboard #######
         gdkey = gdkey + 1
         scoreDictionary[ gdkey ] = ( temprow[0], int( temprow[1] ))
     file.close()
-    
+    allBoundaries = []
     numSquares = 26
+    #print(squareXShow, squareYShow)
     for i in range( numSquares ):
         upperLeft =  [ squareXShow, squareYShow ]
+        #print(upperLeft)
         lowerRight = [ squareXShow + squareWidth, squareYShow + squareHeight ]
         clickBoundary = [ upperLeft, lowerRight ]
+        #print(clickBoundary)
         squareXShow = squareXShow + squareWidth
         allBoundaries.append( clickBoundary )
+        #print(allBoundaries)
     allBoundaries.append( [ [ 50, sizeY-80 ] , [ 165, sizeY-30 ] ] ) # Special Squares
     allBoundaries.append( [ [ sizeX-200, sizeY-90 ] , [ sizeX-50, sizeY-50 ] ] )
     allBoundaries.append( [ [ 225, 375 ] , [ 365, 425 ] ] )
+    numSquares = 29
+    print(allBoundaries)
+    print(len(allBoundaries))
     
     outputString = ""
     pointerCounter = 0
-    
+    submited = False
+    keyChosen = -1
 
 
 def reverseBubbleSortDict( arrayList ):
@@ -437,10 +474,12 @@ def reverseBubbleSortDict( arrayList ):
 
 def leaderboard():
     
-    global pointerCounter
+    global pointerCounter, allBoundaries, numSquares, whichSquare, keyChosen
     
+    
+    #print(numSquares)
     background(255)
-    print("ping")
+    #print("ping")
     displayText( "Leaderboard" , 50, [0], 220, 50, 500, 500 )
     
     strokeWeight(3) # Sumbmit Box
@@ -465,7 +504,13 @@ def leaderboard():
     displayText( outputString, 32, [0], sizeX/2 - 9.5 * len(outputString), 420, 400, 100 )
     
     pointerCounter = drawPointer( pointer, pointerCounter, len(outputString), sizeX, sizeY )
-
+    
+    if whichSquare != -1:
+        mouseRoutine()
+        whichSquare = -1
+    if keyChosen != -1:
+        keyRoutine()
+        keyChosen = -1
 
 def scoreboard( dict, x1, x2, y, rowWidth, rowHeight, scoreboardlength ):
     
@@ -546,3 +591,39 @@ def displayChoices(choices, activeChoices, startSquareX, startSquareY, squareWid
         if activeChoices[i]:
             rect( showX, showY, squareWidth, squareHeight )
         showX += 20
+        
+        
+        
+def mouseRoutine():
+    global whichSquare, submited, keyChosen
+    if whichSquare == 27:
+        if not(submited):
+            submited = True
+            updateLeaderboard()
+    elif whichSquare < 26:
+        keyChosen = choices[whichSquare]
+    elif whichSquare == 26:
+        Init()
+                        
+
+def keyRoutine():
+    global keyChosen, outputString, pointer
+    if len(str(keyChosen)) == 1:
+        if len(outputString) < 12:
+            outputString = outputString[:pointer] + str(keyChosen) + outputString[pointer:]
+            pointer += 1
+    else:
+        if keyChosen == "LEFT":
+            if pointer > 0:
+                pointer -= 1
+        elif keyChosen == "RIGHT":
+            if pointer < len(outputString):
+                pointer += 1
+        elif keyChosen == "BACK":
+            if pointer > 0:
+                outputString = outputString[:pointer-1] + outputString[pointer:] # Takes out character before pointer
+                pointer -= 1
+        elif keyChosen == "DEL":
+            if pointer < len(outputString):
+                outputString = outputString[:pointer] + outputString[pointer+1:] # Takes out character before pointer
+      
