@@ -1,15 +1,22 @@
-import math
+import random
 def setup():
   Init()
   size (800, 600)
 
 def Init():
     global basketball, goal, status, whichSquare
-    global pSX, pSY, pSW, pSH, barX, barY, barW, barH, angle
+    global pSX, pSY, pSW, pSH, barX, barY, barW, barH, angle, lX, lY, lW, lH
     global sX, sY, selecting, selectingPower, score
-    global timeAllowed, scored 
+    global timeAllowed, scored, lbound, rbound
+    #lbound and rbound determines the range of location in which the hoop will randomly regenerate
+    lbound = 400
+    rbound = 700
+    lX = 400
+    lY = 200
+    lW = 100
+    lH = 100
     scored = False
-    timeAllowed = 20
+    timeAllowed = 40
     score = 0
     selectingPower = False
     sX = 50.0
@@ -77,10 +84,15 @@ def draw():
       endGame()
 
 def printScore():
-    global score
+    global score,startTime, timeAllowed
     fill(0)
-    text (str(score), 550, 100)
-    fill (255)
+    text ('Your score: '+str(score), 550, 100)
+
+    if second()>startTime:
+        text ('Time left: ' + str(timeAllowed- (second ()- startTime) ), 550, 200)
+    elif startTime > second():
+        text ('Time left: ' + str(timeAllowed - ( 60-startTime + second())), 550, 200)
+    fill(255)
 
 def startMenu():
     global status
@@ -109,10 +121,12 @@ def optionMenu():
     
 
 def preGame():
-  global status, angle, power, goal, basketball, anglePressed, scored
-  printScore()
+  global status, angle, power, goal, basketball, anglePressed, scored, score
+  if scored:
+      goal.x = random.randint (lbound, rbound)
   scored = False
   background(255)
+  printScore()
   power = -1
   time()
   drawHoop(goal)
@@ -127,15 +141,15 @@ def preGame():
     status = 'inGame'
 
 def inGame():
-  printScore()
+  global lbound, rbound
   scoreCheck()
   background( 255 )
+  printScore()
   global basketball, goal, status
   fill(255)
   stroke(0)
   time()
   basketball.animate()
-  goal.move()
   goal.collisionDetect( basketball )
   goal.collisionBackboard( basketball )
   #print( goal.getRim()[0], goal.getRim()[1] )
@@ -148,6 +162,7 @@ def inGame():
       basketball.x = 50.0
       basketball.y = 550.0
       status = 'preGame'
+      
 
 
   basketball.getRad()*2
@@ -178,6 +193,7 @@ def scoreCheck():
         print('score ', score)
         scored = True
         score +=1
+    
         
       
       
@@ -326,10 +342,7 @@ def angleSelector():
 
 def powerSelector():
     global pSX, pSY, pSW, pSH, barX, barY, barW, barH, lX, lY, lW, lH, selecting, selectingPower
-    lX = 400
-    lY = 200
-    lW = 100
-    lH = 100
+    
     
     stroke(0)
     rect (pSX, pSY, pSW, pSH)
