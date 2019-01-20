@@ -2,6 +2,8 @@ import random
 def setup():
   Init()
   size (800, 600)
+  global sizeX, sizeY
+  sizeX, sizeY = 800, 600
 
 def Init():
     global basketball, goal, status, whichSquare
@@ -18,7 +20,7 @@ def Init():
     lW = 100
     lH = 100
     scored = False
-    timeAllowed = 40
+    timeAllowed = 10
     score = 0
     selectingPower = False
     sX = 50.0
@@ -51,13 +53,18 @@ def endGame ():
     global allBoundaries, numSquares, whichSquare, status
     background(0)
     allBoundaries = []
-    numSquares = 1
+    numSquares = 2
     fill(255)
     rect (100, 100, 100, 100)
+    rect (100, 300, 100, 100)
     allBoundaries.append ([[100, 100], [200, 200]])
+    allBoundaries.append ([[100, 300], [200, 400]])
     if whichSquare == 0:
         status = 'startMenu'
         Init()
+    if whichSquare == 1:
+        status = 'leaderboard'
+        initiateLeaderboard()
 def startNewGame():
     global startTime, status
     startTime = second()
@@ -69,21 +76,22 @@ def time():
     elif startTime > second() and 60-startTime + second() >= timeAllowed:
         status = 'endGame'
 def draw():
-  #print (status)
-  global basketball, goal, status
-  #print (status)
-  if status == 'startMenu':
-      startMenu()
-  if status == 'inGame':
-      inGame()
-  if status == 'optionMenu':
-      optionMenu()
-  if status == 'preGame':
-      preGame()
-  if status == 'startNewGame':
-      startNewGame()
-  if status == 'endGame':
-      endGame()
+    global basketball, goal, status
+    print (status)
+    if status == 'startMenu':
+        startMenu()
+    if status == 'inGame':
+        inGame()
+    if status == 'optionMenu':
+        optionMenu()
+    if status == 'preGame':
+        preGame()
+    if status == 'startNewGame':
+        startNewGame()
+    if status == 'endGame':
+        endGame()
+    if status == 'leaderboard':
+        leaderboard()
 
 def printScore():
     global score,startTime, timeAllowed
@@ -123,25 +131,25 @@ def optionMenu():
     
 
 def preGame():
-  global status, angle, power, goal, basketball, anglePressed, scored, score
-  moveHoop()
-  if scored and score<3:
-      goal.x = random.randint (lbound, rbound)
-  scored = False
-  background(255)
-  printScore()
-  power = -1
-  time()
-  drawHoop(goal)
-  #angle = drawAngleSelector()
-  angle = angleSelector()
-  power = powerSelector()
-  stroke(0)
-  ellipse( goal.getRim()[0], goal.getRim()[1], goal.getRad() * 2, goal.getRad() * 2 )
-  ellipse (basketball.getX(), basketball.getY(), basketball.getRad()*2, basketball.getRad()*2)
-  if power!=-1:
-    basketball = ball(angle, power/6)
-    status = 'inGame'
+    global status, angle, power, goal, basketball, anglePressed, scored, score
+    moveHoop()
+    if scored and score<3:
+        goal.x = random.randint (lbound, rbound)
+    scored = False
+    background(255)
+    printScore()
+    power = -1
+    time()
+    drawHoop(goal)
+    #angle = drawAngleSelector()
+    angle = angleSelector()
+    power = powerSelector()
+    stroke(0)
+    ellipse( goal.getRim()[0], goal.getRim()[1], goal.getRad() * 2, goal.getRad() * 2 )
+    ellipse (basketball.getX(), basketball.getY(), basketball.getRad()*2, basketball.getRad()*2)
+    if power!=-1:
+        basketball = ball(angle, power/6)
+        status = 'inGame'
 
 def moveHoop():
     global score, goal, incrx
@@ -149,36 +157,37 @@ def moveHoop():
         goal.x+=incrx
         if goal.x>=rbound or goal.x <=lbound:
             incrx*=-1
+            
 def inGame():
-  global lbound, rbound, score
-  global basketball, goal, status
-  scoreCheck()
-  background( 255 )
-  printScore()
-  moveHoop()
-  fill(255)
-  stroke(0)
-  time()
-  basketball.animate()
-  goal.collisionDetect( basketball )
-  goal.collisionBackboard( basketball )
-  #print( goal.getRim()[0], goal.getRim()[1] )
-  ellipse( goal.getRim()[0], goal.getRim()[1], goal.getRad() * 2, goal.getRad() * 2 )
-  ellipse (basketball.getX(), basketball.getY(), basketball.getRad()*2, basketball.getRad()*2)
-  #print (basketball.getX(), " ", basketball.getY())
-  drawHoop(goal)
-  frameRate(25)
-  if basketball.getY() >= 575:
-      basketball.x = sX
-      basketball.y = sY
-      status = 'preGame'
+    global lbound, rbound, score
+    global basketball, goal, status
+    scoreCheck()
+    background( 255 )
+    printScore()
+    moveHoop()
+    fill(255)
+    stroke(0)
+    time()
+    basketball.animate()
+    goal.collisionDetect( basketball )
+    goal.collisionBackboard( basketball )
+    #print( goal.getRim()[0], goal.getRim()[1] )
+    ellipse( goal.getRim()[0], goal.getRim()[1], goal.getRad() * 2, goal.getRad() * 2 )
+    ellipse (basketball.getX(), basketball.getY(), basketball.getRad()*2, basketball.getRad()*2)
+    #print (basketball.getX(), " ", basketball.getY())
+    drawHoop(goal)
+    frameRate(25)
+    if basketball.getY() >= 575:
+        basketball.x = sX
+        basketball.y = sY
+        status = 'preGame'
       
 
 
-  basketball.getRad()*2
-  #print (basketball.getX(), " ", basketball.getY())
-  drawHoop(goal)
-  frameRate(25)
+    basketball.getRad()*2
+    #print (basketball.getX(), " ", basketball.getY())
+    drawHoop(goal)
+    frameRate(25)
   
 def mouseReleased():
   global allBoundaries, whichSquare, removeSquare, activeSquares, numSquares, selecting, selectingPower
@@ -363,8 +372,21 @@ def powerSelector():
 
 
 def initiateLeaderboard( ): ####### Leaderboard #######
-    global activeSquares, pointer
-    activeSquares = [True for i in range(29)]
+    global activeSquares, pointer, scoreDictionary, sizeX, sizeY
+    monoFont = loadFont("DejaVuSansMono-48.vlw")
+    textFont(monoFont, 26)
+    
+    
+    
+    global startSquareX, startSquareY, squareHeight, squareWidth
+    startSquareX = 35
+    startSquareY = 470
+    squareXShow = startSquareX
+    squareYShow = startSquareY
+    squareHeight = 40
+    squareWidth = 20
+    
+    activeSquares = [True for i in range(26)]
     file = open("score.txt")
     scoreDictionary = {}
     text = file.readlines()
@@ -379,8 +401,18 @@ def initiateLeaderboard( ): ####### Leaderboard #######
         gdkey = gdkey + 1
         scoreDictionary[ gdkey ] = ( temprow[0], int( temprow[1] ))
     file.close()
-    print(scoreDictionary)
-    return scoreDictionary
+    
+    numSquares = 26
+    for i in range( numSquares ):
+        upperLeft =  [ squareXShow, squareYShow ]
+        lowerRight = [ squareXShow + squareWidth, squareYShow + squareHeight ]
+        clickBoundary = [ upperLeft, lowerRight ]
+        squareXShow = squareXShow + squareWidth
+        allBoundaries.append( clickBoundary )
+    allBoundaries.append( [ [ 50, sizeY-80 ] , [ 165, sizeY-30 ] ] ) # Special Squares
+    allBoundaries.append( [ [ sizeX-200, sizeY-90 ] , [ sizeX-50, sizeY-50 ] ] )
+    allBoundaries.append( [ [ 225, 375 ] , [ 365, 425 ] ] )
+    
 
 
 def reverseBubbleSortDict( arrayList ):
@@ -400,7 +432,38 @@ def reverseBubbleSortDict( arrayList ):
             break
     return arrayList
 
+def leaderboard():
+    
+    background(255)
+    print("ping")
+    displayText( "Leaderboard" , 50, [0], 120, 50, 500, 500 )
+    
+    strokeWeight(3) # Sumbmit Box
+    fill( 50,50,255 )
+    rect( sizeX-165, sizeY - 90, 115, 50 )
+    rect( allBoundaries[26][0][0], allBoundaries[26][0][1], allBoundaries[26][1][0] - allBoundaries[26][0][0], allBoundaries[26][1][1] - allBoundaries[26][0][1] )
+    fill( 255 )
+    textSize( 24 )
+    text("Submit", sizeX-150, sizeY - 75, 150, 50 )
+    text( "Home", allBoundaries[26][0][0] + 20, allBoundaries[26][0][1] + 10, 500, 500 )
+            
+    scoreboard( scoreDictionary, 100, 450, 150, 200, 30, 5 )  
+    
+    displayText( "Your Score is: " + str(playerScore), 32, [0], 100, 340, 500, 500 )
+    
+    displayChoices( choices, [True for i in range(26) ], startSquareX, startSquareY, squareWidth, squareHeight )
+    
+    strokeWeight(3)
+    
+    line( 100, 450, 500, 450 )
+    
+    displayText( outputString, 32, [0], sizeX/2 - 9.5 * len(outputString), 420, 400, 100 )
+    
+    pointerCounter = drawPointer( pointer, pointerCounter, len(outputString), sizeX, sizeY )
+
+
 def scoreboard( dict, x1, x2, y, rowWidth, rowHeight, scoreboardlength ):
+    
     fill(0)
     showX = x1
     showY = y
@@ -445,3 +508,14 @@ def drawPointer( pointer, pointerCounter, myLength, sizex, sizeY ):
     
     return pointerCounter+1
     return pointerCounter+1
+
+
+def displayText( word, wordSize, colour, x, y, thisWidth, thisHeight ):
+    textSize(wordSize)
+    if len(colour) == 1:
+        fill(colour[0])
+    elif len(colour) == 3:
+        fill(colour[0], colour[1], colour[2])
+    else:
+        fill(colour[0], colour[1], colour[2], colour[3])
+    text( word, x, y, thisWidth, thisHeight )
