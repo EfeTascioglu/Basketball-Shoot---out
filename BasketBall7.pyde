@@ -20,7 +20,7 @@ def Init():
     lW = 100
     lH = 100
     scored = False
-    timeAllowed = 10
+    timeAllowed = 5
     score = 0
     selectingPower = False
     sX = 50.0
@@ -372,14 +372,14 @@ def powerSelector():
 
 
 def initiateLeaderboard( ): ####### Leaderboard #######
-    global activeSquares, pointer, scoreDictionary, sizeX, sizeY
+    global activeSquares, pointer, scoreDictionary, sizeX, sizeY, choices, outputString, pointerCounter
     monoFont = loadFont("DejaVuSansMono-48.vlw")
     textFont(monoFont, 26)
     
     
-    
-    global startSquareX, startSquareY, squareHeight, squareWidth
-    startSquareX = 35
+    choices = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+    global startSquareX, startSquareY, squareHeight, squareWidth, pointerCounter
+    startSquareX = 135
     startSquareY = 470
     squareXShow = startSquareX
     squareYShow = startSquareY
@@ -413,6 +413,9 @@ def initiateLeaderboard( ): ####### Leaderboard #######
     allBoundaries.append( [ [ sizeX-200, sizeY-90 ] , [ sizeX-50, sizeY-50 ] ] )
     allBoundaries.append( [ [ 225, 375 ] , [ 365, 425 ] ] )
     
+    outputString = ""
+    pointerCounter = 0
+    
 
 
 def reverseBubbleSortDict( arrayList ):
@@ -434,9 +437,11 @@ def reverseBubbleSortDict( arrayList ):
 
 def leaderboard():
     
+    global pointerCounter
+    
     background(255)
     print("ping")
-    displayText( "Leaderboard" , 50, [0], 120, 50, 500, 500 )
+    displayText( "Leaderboard" , 50, [0], 220, 50, 500, 500 )
     
     strokeWeight(3) # Sumbmit Box
     fill( 50,50,255 )
@@ -447,15 +452,15 @@ def leaderboard():
     text("Submit", sizeX-150, sizeY - 75, 150, 50 )
     text( "Home", allBoundaries[26][0][0] + 20, allBoundaries[26][0][1] + 10, 500, 500 )
             
-    scoreboard( scoreDictionary, 100, 450, 150, 200, 30, 5 )  
+    scoreboard( scoreDictionary, 250, 450, 150, 200, 30, 5 )  
     
-    displayText( "Your Score is: " + str(playerScore), 32, [0], 100, 340, 500, 500 )
+    displayText( "Your Score is: " + str(score), 32, [0], 240, 340, 500, 500 )
     
     displayChoices( choices, [True for i in range(26) ], startSquareX, startSquareY, squareWidth, squareHeight )
     
     strokeWeight(3)
     
-    line( 100, 450, 500, 450 )
+    line( 300, 450, 500, 450 )
     
     displayText( outputString, 32, [0], sizeX/2 - 9.5 * len(outputString), 420, 400, 100 )
     
@@ -480,8 +485,8 @@ def scoreboard( dict, x1, x2, y, rowWidth, rowHeight, scoreboardlength ):
         showY += rowHeight
         
 def updateLeaderboard():
-    global outputString, playerScore, scoreDictionary
-    myTuple = ( outputString, playerScore )
+    global outputString, score, scoreDictionary
+    myTuple = ( outputString, score )
     scoreDictionary.update( { 5 : myTuple } )
   
     scoreDictionary = reverseBubbleSortDict( scoreDictionary )
@@ -519,3 +524,25 @@ def displayText( word, wordSize, colour, x, y, thisWidth, thisHeight ):
     else:
         fill(colour[0], colour[1], colour[2], colour[3])
     text( word, x, y, thisWidth, thisHeight )
+    
+    
+def displayChoices(choices, activeChoices, startSquareX, startSquareY, squareWidth, squareHeight):
+    showX = startSquareX
+    showY = startSquareY
+    fill(0)
+    noStroke()
+    
+    for i in range(len(choices)): # Display chosen letters
+        if activeChoices[i]:
+            text(choices[i], showX, showY + squareHeight - 10 )
+        showX += 20
+    
+    showX = startSquareX
+    showY = startSquareY
+    noFill()
+    strokeWeight(1)
+    stroke(0)
+    for i in range(len(choices)):
+        if activeChoices[i]:
+            rect( showX, showY, squareWidth, squareHeight )
+        showX += 20
