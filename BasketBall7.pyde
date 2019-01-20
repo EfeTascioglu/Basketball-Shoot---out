@@ -1,5 +1,4 @@
 import random
-from leaderBoard import *
 def setup():
     Init()
     size (800, 600)
