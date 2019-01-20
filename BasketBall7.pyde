@@ -7,8 +7,10 @@ def Init():
     global basketball, goal, status, whichSquare
     global pSX, pSY, pSW, pSH, barX, barY, barW, barH, angle, lX, lY, lW, lH
     global sX, sY, selecting, selectingPower, score
-    global timeAllowed, scored, lbound, rbound
+    global timeAllowed, scored, lbound, rbound, incrx
     #lbound and rbound determines the range of location in which the hoop will randomly regenerate
+    #incrx is the movement of the hoop
+    incrx = 1
     lbound = 400
     rbound = 700
     lX = 400
@@ -122,7 +124,8 @@ def optionMenu():
 
 def preGame():
   global status, angle, power, goal, basketball, anglePressed, scored, score
-  if scored:
+  moveHoop()
+  if scored and score<3:
       goal.x = random.randint (lbound, rbound)
   scored = False
   background(255)
@@ -140,12 +143,19 @@ def preGame():
     basketball = ball(angle, power/6)
     status = 'inGame'
 
+def moveHoop():
+    global score, goal, incrx
+    if score >= 3:
+        goal.x+=incrx
+        if goal.x>=rbound or goal.x <=lbound:
+            incrx*=-1
 def inGame():
-  global lbound, rbound
+  global lbound, rbound, score
+  global basketball, goal, status
   scoreCheck()
   background( 255 )
   printScore()
-  global basketball, goal, status
+  moveHoop()
   fill(255)
   stroke(0)
   time()
@@ -159,8 +169,8 @@ def inGame():
   drawHoop(goal)
   frameRate(25)
   if basketball.getY() >= 575:
-      basketball.x = 50.0
-      basketball.y = 550.0
+      basketball.x = sX
+      basketball.y = sY
       status = 'preGame'
       
 
@@ -262,17 +272,6 @@ class hoop:
       self.back = {'x': -20, 'y': self.rim['y'] }
       self.points = [ self.rim, self.top, self.back ]
       
-  def move( self ):
-      self.x += self.motion
-      if self.x <= self.bounds[0]:
-          self.motion *= -1
-          self.x = self.bounds[0]
-          
-      elif self.x >= self.bounds[1]:
-          self.motion *= -1
-          self.x = self.bounds[1]
-    #for i in 
-          
   def collisionDetect( self, ball ):
       #print( ( ball.getX() - self.x + self.rim['x'] ) )
       for i in range(len(self.points)):
