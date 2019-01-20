@@ -1,4 +1,5 @@
 import random
+from leaderBoard import *
 def setup():
     Init()
     size (800, 600)
@@ -20,7 +21,7 @@ def Init():
     lW = 100
     lH = 100
     scored = False
-    timeAllowed = 40
+    timeAllowed = 20
     score = 0
     selectingPower = False
     sX = 50.0
@@ -399,7 +400,6 @@ def powerSelector():
     return (-1)
 
 
-
 def initiateLeaderboard( ): ####### Leaderboard #######
     global activeSquares, pointer, scoreDictionary, sizeX, sizeY, choices, outputString, pointerCounte, allBoundaries, numSquares, keyChosen
     monoFont = loadFont("DejaVuSansMono-48.vlw")
@@ -489,7 +489,7 @@ def leaderboard():
     fill( 255 )
     textSize( 24 )
     text("Submit", sizeX-150, sizeY - 75, 150, 50 )
-    text( "Home", allBoundaries[26][0][0] + 20, allBoundaries[26][0][1] + 10, 500, 500 )
+    text( "Back", allBoundaries[26][0][0] + 20, allBoundaries[26][0][1] + 10, 500, 500 )
             
     scoreboard( scoreDictionary, 250, 450, 150, 200, 30, 5 )  
     
@@ -595,7 +595,7 @@ def displayChoices(choices, activeChoices, startSquareX, startSquareY, squareWid
         
         
 def mouseRoutine():
-    global whichSquare, submited, keyChosen
+    global whichSquare, submited, keyChosen, status
     if whichSquare == 27:
         if not(submited):
             submited = True
@@ -603,7 +603,7 @@ def mouseRoutine():
     elif whichSquare < 26:
         keyChosen = choices[whichSquare]
     elif whichSquare == 26:
-        Init()
+        status = 'endGame'
                         
 
 def keyRoutine():
@@ -626,4 +626,6 @@ def keyRoutine():
         elif keyChosen == "DEL":
             if pointer < len(outputString):
                 outputString = outputString[:pointer] + outputString[pointer+1:] # Takes out character before pointer
+
+
       
